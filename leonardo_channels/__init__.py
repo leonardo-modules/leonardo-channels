@@ -14,6 +14,10 @@ LEONARDO_CHANNEL_ROUTING = [
      {'path': r"^/messages"})
 ]
 
+LEONARDO_JS_COMPRESS_FILES = [
+    'websocket/reconnecting-websocket.min.js'
+]
+
 
 class Config(AppConfig):
     name = 'leonardo_channels'

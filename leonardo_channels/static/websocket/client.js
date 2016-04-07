@@ -2,13 +2,11 @@
 /* Just an example
 
 TODO: make leonardo client which accepts session key and make subscription to a topic
-handle protocols reconnetion timeout etc.
 */
+var ws_scheme = window.location.protocol == 'https:' ? 'wss' : 'ws';
+var basepath = ws_scheme + "://" + window.location.hostname + ":" + window.location.port;
 
-/* Subscrive socket messages */
-var basepath = "ws://" + window.location.hostname + ":" + window.location.port;
-
-socket = new WebSocket(basepath + "/messages?session_key={{ request.session.session_key }}");
+socket = new ReconnectingWebSocket(basepath + "/messages?session_key={{ request.session.session_key }}");
 
 /* Bind django-messages */
 socket.onmessage = function(e) {
