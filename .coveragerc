@@ -1,0 +1,5 @@
+[run]
+source = leonardo_channels
+omit =
+    *migrations*
+    leonardo_channels/__init__.py
