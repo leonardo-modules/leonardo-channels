@@ -1,9 +1,8 @@
 
-
 import logging
 
-from channels.routing import include, route
 from leonardo import leonardo
+from leonardo_channels.routing import include, route
 
 LOG = logging.getLogger(__name__)
 

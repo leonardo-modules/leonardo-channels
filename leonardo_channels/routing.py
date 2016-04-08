@@ -1,5 +1,5 @@
 
-
-from leonardo_channels.router import router
-
-channel_routing = router.routes
+try:
+    from django.channels.routing import route, include, Route, Include
+except ImportError:
+    from channels.routing import route, include, Route, Include

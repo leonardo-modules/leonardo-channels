@@ -14,6 +14,6 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": BACKEND,
         "CONFIG": CONFIG,
-        "ROUTING": "leonardo_channels.routing.channel_routing",
+        "ROUTING": "leonardo_channels.routes.channel_routing",
     },
 }
