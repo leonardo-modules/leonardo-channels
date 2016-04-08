@@ -30,7 +30,7 @@ class Router(object):
         if not self.loaded or force_reload:
 
             self.channel_routing = [
-                include(r[0], **r[1])
+                include(r[0], **r[1]) if len(r) > 1 else include(r[0])
                 for r in leonardo.config.channel_routing
             ]
 
