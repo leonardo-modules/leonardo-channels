@@ -12,8 +12,8 @@ LEONARDO_CHANNEL_ROUTING = [
      {'path': r"^/messages"})
 ]
 
-LEONARDO_JS_COMPRESS_FILES = [
-    'websocket/reconnecting-websocket.min.js'
+LEONARDO_JS_FILES = [
+    'websocket/reconnecting-websocket.js'
 ]
 
 
