@@ -60,17 +60,33 @@ def update_widget_reciever(sender, instance, created, **kwargs):
                 if instance.__class__.__name__ in SKIP_MODELS:
                     return
 
-                # get affected models and refresh it
-                collector = NestedObjects(using="default")  # database name
+                # page related are different because regions can inherit from parent
+                # that means it's not directly connected to this page
+                if sender.__name__ == "Page":
+
+                    regions = instance.content._fetch_regions()
+
+                    for region, instances in regions.items():
+                        for widget in instances:
+                            msg = {
+                                "widget": deepcopy(widget),
+                                "path": "/widgets/update"}
+                            send_message("http.request", msg)
+
+                    return
+
+                # get related models and refresh it
+                collector = NestedObjects(
+                    using=instance._state.db)  # database name
+
                 collector.collect([instance])
 
-                for w_class, models in collector.data.items():
-
-                    if hasattr(w_class, 'parent'):
+                for w_cls, models in collector.data.items():
+                    if hasattr(w_cls, 'parent') and hasattr(w_cls, 'fe_identifier'):
                         for w in models:
                             msg = {
                                 "widget": w,
-                                "sender": w_class,
+                                "sender": w_cls,
                                 "path": "/widgets/update"}
                             send_message("http.request", msg)
 

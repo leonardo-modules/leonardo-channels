@@ -26,12 +26,15 @@ LEONARDO_CONFIG = {
 
 
 def is_websocket_enabled(request):
+
+    from constance import config
+
     try:
         import leonardo_channels
     except ImportError:
         return False
     else:
-        return True
+        return config.LEONARDO_CHANNELS_STREAMING_UPDATE
 
 LEONARDO_EXTRA_CONTEXT = {
     "is_websocket_enabled": is_websocket_enabled
