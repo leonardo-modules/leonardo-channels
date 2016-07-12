@@ -3,6 +3,7 @@ from leonardo import leonardo
 from constance import config
 from leonardo_channels import Channel
 from django.contrib.admin.util import NestedObjects
+from copy import deepcopy
 
 
 SKIP_MODELS = ['Session']
@@ -51,6 +52,8 @@ def update_widget_reciever(sender, instance, created, **kwargs):
                     "sender": sender,
                     "path": "/widgets/update"}
 
+                print msg
+
                 send_message("http.request", msg)
 
             else:
@@ -65,8 +68,7 @@ def update_widget_reciever(sender, instance, created, **kwargs):
 
                 for w_class, models in collector.data.items():
 
-                    # TODO: check by content types
-                    if "widget" in w_class.__name__.lower():
+                    if hasattr(w_class, 'parent'):
                         for w in models:
                             msg = {
                                 "widget": w,
@@ -89,7 +91,8 @@ def update_widget_post_delete(sender, instance, **kwargs):
         if hasattr(instance, "fe_identifier"):
 
             msg = {
-                "widget": instance,
+                # instance is not thread safety
+                "widget": deepcopy(instance),
                 "deleted": True,
                 "sender": sender,
                 "path": "/widgets/update"}
