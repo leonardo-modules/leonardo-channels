@@ -52,8 +52,6 @@ def update_widget_reciever(sender, instance, created, **kwargs):
                     "sender": sender,
                     "path": "/widgets/update"}
 
-                print msg
-
                 send_message("http.request", msg)
 
             else:
