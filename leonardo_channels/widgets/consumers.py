@@ -25,6 +25,10 @@ def ws_add(message):
     users are used to rendering widgets with permissions
     """
 
+    if not message.user.is_authenticated():
+        # for anonymous we have only one record
+        message.user.id = 0
+
     user = cache.get('%s.%s' % (CACHE_KEY, message.user.id))
 
     if not user:
@@ -44,7 +48,7 @@ def ws_add(message):
         cache.set('widget.content.users.count', count, None)
 
     Group("widgets.content-%s" %
-          message.user.username).add(message.reply_channel)
+          message.user.id).add(message.reply_channel)
 
 
 @channel_session_user
@@ -59,7 +63,7 @@ def ws_disconnect(message):
         cache.set(CACHE_KEY, count, None)
 
     Group("widgets.content-%s" %
-          message.user.username).discard(message.reply_channel)
+          message.user.id).discard(message.reply_channel)
 
 
 def widget_update(message, **kwargs):
@@ -101,10 +105,10 @@ def widget_update(message, **kwargs):
 
     count = cache.get(CACHE_COUNT_KEY)
 
-    # now we render widgets for all users
-    for i in range(0, count):
+    keys = ['%s.%s' % (CACHE_KEY, i) for i in range(0, count)]
 
-        user = cache.get('%s.%s' % (CACHE_KEY, i))
+    # now we render widgets for all users
+    for key, user in cache.get_many(keys).items():
 
         if user:
 
@@ -126,4 +130,4 @@ def widget_update(message, **kwargs):
                 }
 
             Group("widgets.content-%s" %
-                  user.username).send({'text': json.dumps(msg)})
+                  user.id).send({'text': json.dumps(msg)})
