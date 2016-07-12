@@ -30,8 +30,6 @@ def widget_update(message, **kwargs):
 
     """
 
-    print message.content
-
     widget = message.content['widget']
 
     message.content["frontend_editing"] = True
@@ -53,7 +51,7 @@ def widget_update(message, **kwargs):
 
     request.LEONARDO_CONFIG = ContextConfig(request)
 
-    if "created" in message.content:
+    if "created" in message.content or "deleted" in message.content:
         # this widget was created
         # its simplier to render whole region instead update
         msg = {
