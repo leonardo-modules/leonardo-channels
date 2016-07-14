@@ -5,6 +5,6 @@ def send_message(path, msg):
 
     try:
         Channel(path).send(msg)
-    except:
+    except Exception as e:
         # TODO handle channel error more properly
-        pass
+        raise e

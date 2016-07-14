@@ -1,8 +1,8 @@
 
 from leonardo import leonardo
 from constance import config
-from copy import deepcopy
-from leonardo_channels.utils import send_message
+from leonardo_channels.managers import users
+from leonardo_channels.senders import sender as channel_sender
 
 SKIP_MODELS = ['Session', 'WidgetDimension']
 
@@ -22,6 +22,10 @@ def update_widget_reciever(sender, instance, created, **kwargs):
     # this works only with websocket
     if IS_WS_ENABLED and config.LEONARDO_CHANNELS_STREAMING_UPDATE:
 
+        # check if anybody listen to update
+        if users.count() == 0:
+            return
+
         needs_update = False
 
         # instance wan't update related models
@@ -35,12 +39,12 @@ def update_widget_reciever(sender, instance, created, **kwargs):
             if hasattr(instance, "fe_identifier"):
 
                 msg = {
-                    "widget": deepcopy(instance),
+                    "widget": instance,
                     "created": created,
                     "sender": sender,
                     "path": "/widgets/update"}
 
-                send_message("http.request", msg)
+                channel_sender.send("http.request", msg)
 
             else:
 
@@ -53,16 +57,13 @@ def update_widget_reciever(sender, instance, created, **kwargs):
                 # this is time expensive operation
 
                 msg = {
-                    "sender": sender,
-                    "instance": deepcopy(instance),
+                    "sender": instance.__class__,
+                    "instance": instance,
                     "created": created,
-                    "kwargs": {
-                        'update_fields': kwargs.get('update_fields', None)
-                    },
                     "path": "/signals/recieve"
                 }
 
-                send_message("http.request", msg)
+                channel_sender.send("http.request", msg)
 
 
 def update_widget_post_delete(sender, instance, **kwargs):
@@ -80,9 +81,9 @@ def update_widget_post_delete(sender, instance, **kwargs):
 
             msg = {
                 # instance is not thread safety
-                "widget": deepcopy(instance),
+                "widget": instance,
                 "deleted": True,
                 "sender": sender,
                 "path": "/widgets/update"}
 
-            Channel("http.request").send(msg)
+            channel_sender.send("http.request", msg)

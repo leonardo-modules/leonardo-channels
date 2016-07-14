@@ -55,6 +55,9 @@ class Config(AppConfig):
         post_delete.connect(update_widget_post_delete,
                             dispatch_uid="update_widget_post_delete")
 
+        # from leonardo_channels.managers import users
+        # users.clear()
+
 try:
     from django.channels import Channel, Group  # NOQA isort:skip
     from django.channels.asgi import channel_layers  # NOQA isort:skip
