@@ -81,6 +81,8 @@ class LeonardoPageConsumer(ModelConsumer):
             except:
                 pass
 
+        # we know that we are in editing mode and user is logged in
+        request.frontend_editing = True
         request.user = user
 
         # call processors
