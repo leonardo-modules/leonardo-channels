@@ -2,7 +2,7 @@
 from leonardo import leonardo
 from constance import config
 from copy import deepcopy
-from .utils import send_message
+from leonardo_channels.utils import send_message
 
 SKIP_MODELS = ['Session', 'WidgetDimension']
 
