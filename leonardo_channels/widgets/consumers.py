@@ -8,7 +8,6 @@ from leonardo_channels.auth import (channel_session_user,
                                     channel_session_user_from_http)
 from leonardo_channels.consumers import LeonardoPageConsumer, ModelConsumer
 from leonardo_channels.managers import users
-from leonardo_channels.senders import sender
 
 LOG = logging.getLogger(__name__)
 
@@ -63,7 +62,7 @@ class SignalConsumer(ModelConsumer):
 
         # page related are different because regions can inherit from parent
         # that means it's not directly connected to this page
-        if sender.__name__ == "Page":
+        if instance.__class__.__name__ == "Page":
 
             regions = instance.content._fetch_regions()
 
