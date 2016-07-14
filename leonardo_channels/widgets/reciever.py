@@ -1,23 +1,12 @@
 
 from leonardo import leonardo
 from constance import config
-from leonardo_channels import Channel
-from django.contrib.admin.util import NestedObjects
 from copy import deepcopy
+from .utils import send_message
 
-
-SKIP_MODELS = ['Session']
+SKIP_MODELS = ['Session', 'WidgetDimension']
 
 IS_WS_ENABLED = leonardo.config.get_attr("is_websocket_enabled", None)
-
-
-def send_message(path, msg):
-
-    try:
-        Channel(path).send(msg)
-    except:
-        # TODO handle channel error more properly
-        pass
 
 
 def update_widget_reciever(sender, instance, created, **kwargs):
@@ -46,8 +35,7 @@ def update_widget_reciever(sender, instance, created, **kwargs):
             if hasattr(instance, "fe_identifier"):
 
                 msg = {
-                    # instance itself is not thread safety and raises error
-                    "widget": instance.__class__.objects.get(pk=instance.pk),
+                    "widget": deepcopy(instance),
                     "created": created,
                     "sender": sender,
                     "path": "/widgets/update"}
@@ -60,35 +48,21 @@ def update_widget_reciever(sender, instance, created, **kwargs):
                 if instance.__class__.__name__ in SKIP_MODELS:
                     return
 
-                # page related are different because regions can inherit from parent
-                # that means it's not directly connected to this page
-                if sender.__name__ == "Page":
+                # now we want collect all related widgets
+                # for this model and rerender them
+                # this is time expensive operation
 
-                    regions = instance.content._fetch_regions()
+                msg = {
+                    "sender": sender,
+                    "instance": deepcopy(instance),
+                    "created": created,
+                    "kwargs": {
+                        'update_fields': kwargs.get('update_fields', None)
+                    },
+                    "path": "/signals/recieve"
+                }
 
-                    for region, instances in regions.items():
-                        for widget in instances:
-                            msg = {
-                                "widget": deepcopy(widget),
-                                "path": "/widgets/update"}
-                            send_message("http.request", msg)
-
-                    return
-
-                # get related models and refresh it
-                collector = NestedObjects(
-                    using=instance._state.db)  # database name
-
-                collector.collect([instance])
-
-                for w_cls, models in collector.data.items():
-                    if hasattr(w_cls, 'parent') and hasattr(w_cls, 'fe_identifier'):
-                        for w in models:
-                            msg = {
-                                "widget": w,
-                                "sender": w_cls,
-                                "path": "/widgets/update"}
-                            send_message("http.request", msg)
+                send_message("http.request", msg)
 
 
 def update_widget_post_delete(sender, instance, **kwargs):
