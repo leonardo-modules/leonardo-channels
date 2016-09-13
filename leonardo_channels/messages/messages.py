@@ -15,4 +15,5 @@ def add_message(user, level, message, extra_tags='', fail_silently=False):
         'level': level,
         'extra_tags': extra_tags,
     }
-    Group("messages-%s" % user.username).send({'text': json.dumps(msg)})
+    Group("messages-%s" %
+          message.user.id).send({'text': json.dumps(msg)})
