@@ -1,0 +1,18 @@
+CHANGES
+=======
+
+* Register recievers only on demand
+* Use id instead of username
+* Override frontend editing property
+* Fix refactor
+* Managers for group data
+* Fix moved import
+* Rewrite to generic consumers and do more thing on workers
+* Support anonymous users and use get_many instead hitting cache
+* Save users and send private message with rendered widgets
+* Handle page related
+* Cleanup
+* Copy instance on delete
+* Cleanup and fix on delete update
+* Add initial implementation for async updates
+* Bump channels version
