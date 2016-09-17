@@ -21,7 +21,7 @@ LEONARDO_JS_FILES = [
 ]
 
 LEONARDO_CONFIG = {
-    'LEONARDO_CHANNELS_STREAMING_UPDATE': (True, _('Stream updates to the clients (Experimental)'))
+    'LEONARDO_CHANNELS_STREAMING_UPDATE': (False, _('Stream updates to the clients (Experimental)'))
 }
 
 
